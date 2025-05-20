@@ -1,0 +1,9 @@
+#pragma once
+#include "Role.hpp"
+
+ class Baron: public Role
+ {
+    public:
+
+    void invest(Player& p, Game& g);
+ };

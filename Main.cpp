@@ -259,9 +259,19 @@ int main()
     cout<<"Check if Bob(Spy) can see other players coins\n";
     game.currentPlayerTurn()->getRole()->seeTargetCoins(*game.currentPlayerTurn(),player1);
     game.currentPlayerTurn()->getRole()->seeTargetCoins(*game.currentPlayerTurn(),player6);
-    
+
     cout<<"test Spy function: prevent some player from use arrest\n";
-    
+    game.currentPlayerTurn()->getRole()->blockArrest(player3);
+    game.currentPlayerTurn()->gatherAction(game);
+    cout<<"--------\n";
+    cout<<"current player: "<<game.currentPlayerTurn()->getName()<<endl;
+    cout<<"player5 coins: "<<player5->getCoins()<<"\n"<<"player3 coins: " << player3->getCoins()<<endl;
+    game.currentPlayerTurn()->arrestAction(player5,game);
+    cout<<"player5 coins: "<<player5->getCoins()<<"\n"<<"player3 coins: " << player3->getCoins()<<endl;
+    cout<<game.currentPlayerTurn()->getName()<< " turn"<<endl;
+    //cout<<
+
+
 
 
 }

@@ -37,6 +37,9 @@ void Role::arrest(Player &p, shared_ptr<Player>& target, Game &g)
     if(target->getCoins() < 1)
     {
         throw std::logic_error("Target has no money, can't take from him.\n pls choose other target");
+    }if(p.isArrested())
+    {
+      throw std::logic_error("player is blocked to do arrest.");  
     }
     target->decreaceCoins(1);
     p.addCoins(1);

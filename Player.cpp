@@ -140,7 +140,12 @@ void Player::coupAction(shared_ptr<Player>& target, Game &game)
 
 void Player::arrestAction(shared_ptr<Player>& target, Game &game)
 {
-this->role->arrest(*this, target, game);
+    try{
+        this->role->arrest(*this, target, game);
+    }catch (const std::exception& e){
+       std::cout << "arrest failed: " << e.what() << "\n"; 
+     }
+game.nextTurn();
 }
 
 void Player::bribeAction(Game &game)

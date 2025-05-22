@@ -3,5 +3,9 @@
 
 class Merchant: public Role
 {
-    void extraCoin(Player& p, shared_ptr<Player> target, Game& g);
+    public:
+
+    void extraCoin(Player& p, Game& g);
+    virtual void onArrested() override;
+    virtual std::string name() const override { return "Merchant"; }
 };

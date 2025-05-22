@@ -1,6 +1,11 @@
+#pragma once
 #include "Role.hpp"
 
 class Spy : public Role
 {
-    virtual void arrest(Player& p, shared_ptr<Player> target, Game& g) override;
+    public:
+
+    void seeTargetCoins(Player& p,shared_ptr<Player>& target) override;
+    void blockArrest(shared_ptr<Player>& target) override;
+    virtual std::string name() const override { return "Spy"; }
 };

@@ -1,20 +1,36 @@
 #include "Baron.hpp"
 #include "Player.hpp"
 #include "Game.hpp"
+
 void Baron::invest(Player &p, Game &g)
 {
-    if (p.getisSanctioned())
-    {
-        g.takeFromPool(1);
-        p.addCoins(1);
-        return;
+    if(p.getRole()->name() != "Baron"){
+        throw std::invalid_argument("Only Baron can invest");
     }
-    if(p.getCoins() < 3)
-    {
-        throw std::invalid_argument("Doesnt enough money for the Player");
+    
+    if (p.getisSanctioned()) {
+        throw std::invalid_argument("Baron is sanctioned, cannot invest");
     }
+    
+    if(p.getCoins() < 3) {
+        throw std::invalid_argument("Baron doesn't have enough money to invest (need 3 coins)");
+    }
+    
+    // Pay 3 coins to get 6 coins (net gain of 3)
     p.decreaceCoins(3);
     g.addToPool(3);
     g.takeFromPool(6);
     p.addCoins(6);
+    
+    std::cout << p.getName() << " (Baron) invested 3 coins and received 6 coins.\n";
+}
+
+// הוספת הטיפול בחרם - ברון מקבל מטבע כפיצוי
+void Baron::onSanctioned(Player &byPlayer, Game &g)
+{
+    // ברון מקבל מטבע אחד כפיצוי כשהוא מחורם
+    g.takeFromPool(1);
+    // נצטרך למצוא את הברון במשחק ולהוסיף לו מטבע
+    // זה מעט מורכב כי אין לנו הפניה ישירה לשחקן הברון
+    std::cout << "Baron receives 1 coin compensation for being sanctioned.\n";
 }

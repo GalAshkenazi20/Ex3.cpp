@@ -10,6 +10,10 @@ void Game::addPlayer(shared_ptr<Player>& player)
     if (!player->isAlive()) {
         throw std::invalid_argument("Cannot add dead player to game.");
     }
+    if(players.size() >= 6)     
+    {
+       throw std::invalid_argument("Too much players to start the game."); 
+    }
     for (const auto& p : players) {
         if (p == player || p->getName() == player->getName()) {
             throw std::invalid_argument("Player already exists in the game.");
@@ -19,6 +23,9 @@ void Game::addPlayer(shared_ptr<Player>& player)
 }
 shared_ptr<Player> Game::currentPlayerTurn() const
 {
+    if (players.empty()) {
+        return nullptr;
+    }
     return players[turnIndex];
 }
 
@@ -28,12 +35,26 @@ void Game::nextTurn()
     {
        players[turnIndex]->getisSanctioned() = false; 
     } 
+    if(players[turnIndex]->isArrestBlocked())
+    {
+       players[turnIndex]->isArrestBlocked() = false; 
+    } 
     do {
         turnIndex = (turnIndex + 1) % players.size();
     } while (!players[turnIndex]->isAlive());
 
+
     removePendingBribe(players[turnIndex]);
     removePendingTax(players[turnIndex]);
+    if (players[turnIndex]->getRole()->name() == "Merchant") {
+        players[turnIndex]->getRole()->extraCoin(*players[turnIndex], *this);
+    }
+    if (players[turnIndex]->getCoins() >= 10) {
+        players[turnIndex]->getMustCoup() = true;
+        std::cout << players[turnIndex]->getName() << " has " << players[turnIndex]->getCoins() 
+                  << " coins and MUST coup this turn!\n";
+    }
+
 }
 
 void Game::extraTurn(Player &p)

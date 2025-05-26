@@ -16,8 +16,9 @@ private:
     bool isturn;
     shared_ptr<Role> role;
     bool isSanctioned = false;
-    bool isArrest;
     bool blockCoup = false;
+    bool arrestBlocked = false;
+    bool mustCoup = false;  // הוספה חדשה
 
 public:
     Player(const string& name);
@@ -30,8 +31,9 @@ public:
     bool& isTurn();
     bool& getisSanctioned();
     bool& getisAlive();
-    bool& isArrested();
     bool& isBlockedCoup();
+    bool& isArrestBlocked();  // הוספתי מתודה חדשה
+    bool& getMustCoup();  // הוספת גישה למשתנה
 
     void addCoins(int amount);
     void decreaceCoins(int amount);
@@ -42,4 +44,5 @@ public:
     void arrestAction(shared_ptr<Player>& target, Game& game);
     void bribeAction(Game& game);
     void sanctionAction(shared_ptr<Player>& target, Game& game);
+    void investAction(Game& game);  // Added Baron invest action
 };

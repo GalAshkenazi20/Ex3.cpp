@@ -15,8 +15,8 @@ public:
     void gather(Player &p, Game &g);
     virtual void tax(shared_ptr<Player> &p, Game &g);
     virtual void bribe(shared_ptr<Player> &p, Game &g);
-    virtual void arrest(Player &p, shared_ptr<Player> &target, Game &g);
-    virtual void sanction(Player &p, shared_ptr<Player> &target, Game &g);
+    void arrest(Player &p, shared_ptr<Player> &target, Game &g);  // הוסרה virtual
+    void sanction(Player &p, shared_ptr<Player> &target, Game &g);  // הוסרה virtual
     void coup(Player &p, shared_ptr<Player> &target, Game &g);
 
     virtual bool canBlockTax() const { return false; }
@@ -30,8 +30,13 @@ public:
     virtual void onSanctioned(Player &byPlayer, Game &g);
     virtual void onArrested();
 
+    //Spy actions
     virtual void seeTargetCoins(Player &p, std::shared_ptr<Player> &target){}
     virtual void blockArrest(std::shared_ptr<Player> &target){}
+    //Baron Actions
+    virtual void invest(Player& p, Game& g);
+
+    virtual void extraCoin(Player& p, Game& g){}
 
     virtual ~Role() = default;
 };

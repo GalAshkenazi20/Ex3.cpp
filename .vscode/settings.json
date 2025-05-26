@@ -56,12 +56,22 @@
         "sstream": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "qvboxlayout": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "mutex": "cpp"
     },
     "makefile.launchConfigurations": [
         {
             "cwd": "/home/gala/Ex3.cpp",
             "binaryPath": "/home/gala/Ex3.cpp/Main",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/gala/Ex3.cpp",
+            "binaryPath": "/home/gala/Ex3.cpp/gui",
             "binaryArgs": []
         }
     ]

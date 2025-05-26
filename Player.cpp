@@ -11,7 +11,7 @@
 #include "Role.hpp"
 
 Player::Player(const std::string &name)
-    : name(name), coins(0), alive(true), isturn(false), isArrest(false)
+    : name(name), coins(0), alive(true), isturn(false), arrestBlocked(false)
 {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -44,8 +44,8 @@ Player::Player(const std::string &name)
 }
 
 
-    Player::Player(const std::string& name, std::shared_ptr<Role> chosenRole)
-    : name(name), coins(0), alive(true), isArrest(false), isSanctioned(false), role(chosenRole) {}
+    // Player::Player(const std::string& name, std::shared_ptr<Role> chosenRole)
+    // : name(name), coins(0), alive(true), isArrest(false), isSanctioned(false), role(chosenRole) {}
 
 const string &Player::getName() const
 {
@@ -81,17 +81,26 @@ bool &Player::getisAlive()
 {
     return this->alive;
 }
-bool &Player::isArrested()
-{
-    return this->isArrest;
-}
+
 bool &Player::isBlockedCoup()
 {
     return this->blockCoup;
 }
+bool &Player::isArrestBlocked()
+{
+    return this->arrestBlocked;
+}
+bool &Player::getMustCoup()
+{
+    return this->mustCoup;
+}
 void Player::addCoins(int amount)
 {
     this->coins += amount;
+    if (coins >= 10 && !mustCoup) {
+        mustCoup = true;
+        std::cout << name << " now has " << coins << " coins and MUST coup in the next turn!\n";
+    }
 }
 
 void Player::decreaceCoins(int amount)
@@ -102,19 +111,31 @@ void Player::decreaceCoins(int amount)
 
 void Player::gatherAction(Game &game)
 {
-    this->role->gather(*this, game);
-    game.nextTurn();
+    if (mustCoup) {
+        throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
+    }
+    if (getisSanctioned()) {
+        throw std::invalid_argument(name + " is sanctioned and cannot gather!");
+    }
+    try {
+        this->role->gather(*this, game);
+        game.nextTurn();
+    } catch (const std::exception& e) {
+        throw std::runtime_error(std::string("Gather failed: ") + e.what());
+    }
 }
 
 void Player::taxAction(Game &game)
 {
     if (this->isSanctioned)
     {
-        std::cout << "is sanctioned, cannot use tax.\n";
-        game.nextTurn();
-        return;
+        throw std::invalid_argument("Player is sanctioned, cannot use tax.");
     }
-   shared_ptr<Player> ss;
+    if (mustCoup) {
+        throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
+    }
+    
+    shared_ptr<Player> ss;
     for (auto &p : game.getPlayers())
     {
         if (p.get() == this)
@@ -133,23 +154,34 @@ void Player::coupAction(shared_ptr<Player>& target, Game &game)
     try{
         this->role->coup(*this, target, game);
     } catch(const std::exception& e) {
-        std::cout << "Coup failed: " << e.what() << "\n";
+        throw std::runtime_error(std::string("Coup failed: ") + e.what());
     }
+    mustCoup =false;
     game.nextTurn();
 }
 
 void Player::arrestAction(shared_ptr<Player>& target, Game &game)
 {
-    try{
+    if (mustCoup) {
+        throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
+    }
+     if (isArrestBlocked()) {
+        throw std::invalid_argument(name + " is blocked from arresting this turn!");
+    }
+    try {
         this->role->arrest(*this, target, game);
-    }catch (const std::exception& e){
-       std::cout << "arrest failed: " << e.what() << "\n"; 
-     }
-game.nextTurn();
+    } catch (const std::exception& e) {
+        throw std::runtime_error(std::string("Arrest failed: ") + e.what());
+    }
+    game.nextTurn();
 }
 
 void Player::bribeAction(Game &game)
 {
+     if (mustCoup) {
+        throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
+    }
+
     shared_ptr<Player> ss;
     for (auto &p : game.getPlayers())
     {
@@ -159,21 +191,42 @@ void Player::bribeAction(Game &game)
             break;
         }
     }
-    try
-    {
+
+    try {
         this->role->bribe(ss, game);
-        std::cout << "Bribe successful!\n";
+        // אל תקרא ל-nextTurn()! השחקן אמור לקבל תור נוסף
+        std::cout << this->getName() << " used bribe and gets to play again!\n";
+    } catch (const std::exception& e) {
+        throw std::runtime_error(std::string("Bribe failed: ") + e.what());
     }
-    catch(const std::exception& e)
-    {
-         std::cout << "Bribe failed: " << e.what() << "\n";
-    }
-    game.nextTurn();
 }
 
 void Player::sanctionAction(shared_ptr<Player>& target, Game &game)
 {
-    this->role->sanction(*this, target, game);
-    target->getRole()->onSanctioned(*this, game);
+     if (mustCoup) {
+        throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
+    }
+    try {
+        this->role->sanction(*this, target, game);
+    } catch (const std::exception& e) {
+        throw std::runtime_error(std::string("Sanction failed: ") + e.what());
+    }
     game.nextTurn();
+}
+
+void Player::investAction(Game &game)
+{
+     if (mustCoup) {
+        throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
+    }
+    if (this->getRole()->name() != "Baron") {
+        throw std::invalid_argument("Only Baron can invest");
+    }
+    
+    try {
+        this->role->invest(*this, game);
+        game.nextTurn();
+    } catch (const std::exception& e) {
+        throw std::runtime_error(std::string("Invest failed: ") + e.what());
+    }
 }

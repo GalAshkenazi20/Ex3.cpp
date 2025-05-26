@@ -195,31 +195,36 @@ int main()
     cout << "bob using gather\n";
     game.currentPlayerTurn()->gatherAction(game);
 
-    cout<<"charlie coup bob\n";
-    game.currentPlayerTurn()->coupAction(p2,game);
-    cout<<"\n"<<"---Checking Active Players---\n";
-    for(auto str : game.activePlayerNames())
+    cout << "charlie coup bob\n";
+    game.currentPlayerTurn()->coupAction(p2, game);
+    cout << "\n"
+         << "---Checking Active Players---\n";
+    for (auto str : game.activePlayerNames())
+
     {
-        cout<<str<<endl;
+        cout << str << endl;
     }
-    cout<<"-----------------\n";
-    cout<<"checking if we have winner\n";
-    try{
-      game.winner();  
-    }catch(const std::exception& e) 
+    cout << "-----------------\n";
+    cout << "checking if we have winner\n";
+    try
+    {
+        game.winner();
+    }
+    catch (const std::exception &e)
     {
         cout << "No winner yet: " << e.what() << "\n";
     }
-    
-    cout<<"adding 7 coins to Alice to check winner\n";
+
+    cout << "adding 7 coins to Alice to check winner\n";
     game.currentPlayerTurn()->addCoins(7);
-    game.currentPlayerTurn()->coupAction(p3,game);
-    
-    cout<<"The winner is..."<<game.winner() << endl;
+    cout << "here\n";
+    game.currentPlayerTurn()->coupAction(p3, game);
+
+    cout << "The winner is..." << game.winner() << endl;
     game.gameReset();
-    cout<<"\n\n\n";
-    cout<<"------GAME NUMBER 2------\n\n";
-    
+    cout << "\n\n\n";
+    cout << "------GAME NUMBER 2------\n\n";
+
     auto player1 = make_shared<Player>("Alice", make_shared<Governor>());
     auto player2 = make_shared<Player>("Bob", make_shared<Spy>());
     auto player3 = make_shared<Player>("Charlie", make_shared<Baron>());
@@ -240,15 +245,16 @@ int main()
     {
         cout << "Active Players : " << p->getName() << " || role: " << printROLE(p) << endl;
     }
-    cout<<"\n"<<"---Checking Active Players---\n";
-    for(auto str : game.activePlayerNames())
+    cout << "\n"
+         << "---Checking Active Players---\n";
+    for (auto str : game.activePlayerNames())
     {
-        cout<<str<<endl;
+        cout << str << endl;
     }
-    cout<<"-----------------\n";
-    cout<<"alice collect tax and she need to get 3coins\n";
+    cout << "-----------------\n";
+    cout << "alice collect tax and she need to get 3coins\n";
     game.currentPlayerTurn()->taxAction(game);
-    cout<< "Alice coins: "<<player1->getCoins()<<endl;
+    cout << "Alice coins: " << player1->getCoins() << endl;
     cout << "---- adding 5 coins each player---\n";
     for (auto player : game.getPlayers())
     {
@@ -256,22 +262,42 @@ int main()
     }
 
     cout << "\n\n";
-    cout<<"Check if Bob(Spy) can see other players coins\n";
-    game.currentPlayerTurn()->getRole()->seeTargetCoins(*game.currentPlayerTurn(),player1);
-    game.currentPlayerTurn()->getRole()->seeTargetCoins(*game.currentPlayerTurn(),player6);
+    cout << "Check if Bob(Spy) can see other players coins\n";
+    game.currentPlayerTurn()->getRole()->seeTargetCoins(*game.currentPlayerTurn(), player1);
+    game.currentPlayerTurn()->getRole()->seeTargetCoins(*game.currentPlayerTurn(), player6);
 
-    cout<<"test Spy function: prevent some player from use arrest\n";
+    cout << "test Spy function: prevent some player from use arrest\n";
     game.currentPlayerTurn()->getRole()->blockArrest(player3);
     game.currentPlayerTurn()->gatherAction(game);
-    cout<<"--------\n";
-    cout<<"current player: "<<game.currentPlayerTurn()->getName()<<endl;
-    cout<<"player5 coins: "<<player5->getCoins()<<"\n"<<"player3 coins: " << player3->getCoins()<<endl;
-    game.currentPlayerTurn()->arrestAction(player5,game);
-    cout<<"player5 coins: "<<player5->getCoins()<<"\n"<<"player3 coins: " << player3->getCoins()<<endl;
-    cout<<game.currentPlayerTurn()->getName()<< " turn"<<endl;
-    //cout<<
+    cout << "--------\n";
+    cout << "current player: " << game.currentPlayerTurn()->getName() << endl;
+    cout << "player5 coins: " << player5->getCoins() << "\n"
+         << "player3 coins: " << player3->getCoins() << endl;
+    game.currentPlayerTurn()->arrestAction(player5, game);
+    cout << "player5 coins: " << player5->getCoins() << "\n"
+         << "player3 coins: " << player3->getCoins() << endl;
 
+    cout << game.currentPlayerTurn()->getName() << " turn , coins: " << game.currentPlayerTurn()->getCoins() << endl;
+    cout << "after Diana invest coins:\n";
+    try
+    {
+        game.currentPlayerTurn()->getRole()->invest(*game.currentPlayerTurn(), game);
+    }
+    catch (const std::exception &e)
+    {
+        cout << "invest failed: " << e.what() << "\n";
+    }
 
+    cout << "Trying to invest with cahrlie(Baron) " << endl
+         << "charlie coins before invest: " << player3->getCoins() << endl;
+    player3->getRole()->invest(*player3, game);
+    cout << "charlie coins after invest: " << player3->getCoins() << endl;
 
-
+    cout << "Trying to invest with cahrlie(Baron) to other player " << endl;
+    player3->getRole()->invest(*player1, game);
+    cout << "\n====== BARON INVEST TEST ======\n";
+    // Simulate sanction on Baron
+    cout << "Applying sanction on " << player3->getName() << " (Baron)...\n";
+    player1->sanctionAction(player3, game);
+    cout << player3->getName() << " after sanction has " << player3->getCoins() << " coins.\n";
 }

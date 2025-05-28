@@ -61,7 +61,11 @@
         "condition_variable": "cpp",
         "list": "cpp",
         "map": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "csignal": "cpp",
+        "cstring": "cpp",
+        "unordered_set": "cpp",
+        "fstream": "cpp"
     },
     "makefile.launchConfigurations": [
         {

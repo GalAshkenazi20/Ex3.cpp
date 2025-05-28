@@ -405,8 +405,9 @@ public:
                 auto spy = std::dynamic_pointer_cast<Spy>(game.currentPlayerTurn()->getRole());
                 if (spy)
                 {
-                    spy->seeTargetCoins(*game.currentPlayerTurn(), target);
                     spy->blockArrest(target);
+                    spy->seeTargetCoins(*game.currentPlayerTurn(), target);
+                    
                     QMessageBox::information(this, "Spy Action",
                                              QString("%1 has %2 coins and arrest is blocked next turn")
                                                  .arg(QString::fromStdString(target->getName()))

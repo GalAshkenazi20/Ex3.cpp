@@ -44,8 +44,8 @@ Player::Player(const std::string &name)
 }
 
 
-    // Player::Player(const std::string& name, std::shared_ptr<Role> chosenRole)
-    // : name(name), coins(0), alive(true), isArrest(false), isSanctioned(false), role(chosenRole) {}
+    Player::Player(const std::string& name, std::shared_ptr<Role> chosenRole)
+    : name(name), coins(0), alive(true), isSanctioned(false), role(chosenRole) {}
 
 const string &Player::getName() const
 {
@@ -114,7 +114,7 @@ void Player::gatherAction(Game &game)
     if (mustCoup) {
         throw std::invalid_argument(name + " has 10+ coins and must coup - cannot perform other actions!");
     }
-    if (getisSanctioned()) {
+    if (isSanctioned) {
         throw std::invalid_argument(name + " is sanctioned and cannot gather!");
     }
     try {
@@ -127,7 +127,7 @@ void Player::gatherAction(Game &game)
 
 void Player::taxAction(Game &game)
 {
-    if (this->isSanctioned)
+    if (isSanctioned)
     {
         throw std::invalid_argument("Player is sanctioned, cannot use tax.");
     }

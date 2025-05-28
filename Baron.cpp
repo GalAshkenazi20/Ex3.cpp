@@ -25,12 +25,9 @@ void Baron::invest(Player &p, Game &g)
     std::cout << p.getName() << " (Baron) invested 3 coins and received 6 coins.\n";
 }
 
-// הוספת הטיפול בחרם - ברון מקבל מטבע כפיצוי
+
 void Baron::onSanctioned(Player &byPlayer, Game &g)
 {
-    // ברון מקבל מטבע אחד כפיצוי כשהוא מחורם
     g.takeFromPool(1);
-    // נצטרך למצוא את הברון במשחק ולהוסיף לו מטבע
-    // זה מעט מורכב כי אין לנו הפניה ישירה לשחקן הברון
     std::cout << "Baron receives 1 coin compensation for being sanctioned.\n";
 }

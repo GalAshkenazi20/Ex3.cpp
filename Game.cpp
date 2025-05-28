@@ -39,6 +39,10 @@ void Game::nextTurn()
     {
        players[turnIndex]->isArrestBlocked() = false; 
     } 
+    if(players[turnIndex]->getCoins() < 10) 
+    {
+     players[turnIndex]->getMustCoup() = false; 
+    }
     do {
         turnIndex = (turnIndex + 1) % players.size();
     } while (!players[turnIndex]->isAlive());

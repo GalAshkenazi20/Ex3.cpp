@@ -1,3 +1,4 @@
+//galahkena1@gmail.com
 #include "Role.hpp"
 #include "Player.hpp"
 #include "Game.hpp"

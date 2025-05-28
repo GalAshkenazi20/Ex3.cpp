@@ -1,3 +1,4 @@
+//galahkena1@gmail.com
 #include "Merchant.hpp"
 #include "Player.hpp"
 #include "Game.hpp"

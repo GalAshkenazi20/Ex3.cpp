@@ -2,19 +2,27 @@
 #include "Game.hpp"
 #include "Player.hpp"
 
-Game::Game()
-{
-}
+/**
+ * Constructor for the Game class.
+ * Initializes the game with default values.
+ */
+Game::Game() {}
 
+/**
+ * Adds a new player to the game.
+ * Throws an exception if the player is dead, already exists, or if the game has too many players.
+ */
 void Game::addPlayer(shared_ptr<Player>& player)
 {
     if (!player->isAlive()) {
         throw std::invalid_argument("Cannot add dead player to game.");
     }
+    // Maximum 6 players allowed in the game
     if(players.size() >= 6)     
     {
        throw std::invalid_argument("Too much players to start the game."); 
     }
+    // Check for duplicate players (same object or same name)
     for (const auto& p : players) {
         if (p == player || p->getName() == player->getName()) {
             throw std::invalid_argument("Player already exists in the game.");
@@ -22,6 +30,11 @@ void Game::addPlayer(shared_ptr<Player>& player)
     }
     players.push_back(player);
 }
+
+/**
+ * Returns the current player's turn.
+ * If no players exist, returns nullptr.
+ */
 shared_ptr<Player> Game::currentPlayerTurn() const
 {
     if (players.empty()) {
@@ -30,6 +43,10 @@ shared_ptr<Player> Game::currentPlayerTurn() const
     return players[turnIndex];
 }
 
+/**
+ * Moves to the next player's turn.
+ * Skips dead players and resets certain player states.
+ */
 void Game::nextTurn()
 {
     if(players[turnIndex]->getisSanctioned())
@@ -62,6 +79,10 @@ void Game::nextTurn()
 
 }
 
+/**
+ * Gives an extra turn to a specific player.
+ * Adjusts the turn index to make the player play again.
+ */
 void Game::extraTurn(Player &p)
 {
     // Find the player in the players vector
@@ -83,11 +104,17 @@ void Game::extraTurn(Player &p)
     }
 }
 
+/**
+ * Returns a list of all players in the game.
+ */
 vector<shared_ptr<Player>> Game::getPlayers() const
 {
     return players;
 }
 
+/**
+ * Returns a list of names of all active (alive) players.
+ */
 vector<string> Game::activePlayerNames() const
 {
     vector<string> result;
@@ -101,37 +128,59 @@ vector<string> Game::activePlayerNames() const
     return result;
 }
 
+/**
+ * Adds a player to the pending bribes list.
+ */
 void Game::addPendingBribe(shared_ptr<Player>& p)
 {
     pendingBribes.push_back(p);
 }
 
+/**
+ * Checks if a player has a pending bribe.
+ */
 bool Game::isBribePending(shared_ptr<Player>& p) const
 {
      return std::find(pendingBribes.begin(), pendingBribes.end(), p) != pendingBribes.end();
 }
 
+/**
+ * Removes a player from the pending bribes list.
+ */
 void Game::removePendingBribe(shared_ptr<Player>& p)
 {
     pendingBribes.erase(std::remove(pendingBribes.begin(), pendingBribes.end(), p), pendingBribes.end());
 
 }
 
-void Game::addPendingTax(std::shared_ptr<Player>& p)
+/**
+ * Adds a player to the pending taxes list.
+ */
+void Game::addPendingTax(shared_ptr<Player>& p)
 {
     pendingTaxes.push_back(p);
 }
 
-bool Game::isTaxPending(std::shared_ptr<Player>& p) const
+/**
+ * Checks if a player has a pending tax.
+ */
+bool Game::isTaxPending(shared_ptr<Player>& p) const
 {
     return std::find(pendingTaxes.begin(), pendingTaxes.end(), p) != pendingTaxes.end();
 }
 
+/**
+ * Removes a player from the pending taxes list.
+ */
 void Game::removePendingTax(shared_ptr<Player>& p)
 {
     pendingTaxes.erase(std::remove(pendingTaxes.begin(), pendingTaxes.end(), p), pendingTaxes.end());
 }
 
+/**
+ * Returns the winner of the game if only one player is alive.
+ * Resets the game after declaring the winner.
+ */
 string Game::winner() const
 {
     string winner;
@@ -148,9 +197,14 @@ string Game::winner() const
     {
         throw std::invalid_argument("Game not end");
     }
+    const_cast<Game*>(this)->gameReset();
     return winner;
 }
 
+/**
+ * Resets the game to its initial state.
+ * Clears players, resets the coin pool, and clears pending actions.
+ */
 void Game::gameReset()
 {
     players.clear();
@@ -158,25 +212,36 @@ void Game::gameReset()
     turnIndex = 0;
     pendingBribes.clear();
     pendingTaxes.clear();
-    
-
+    std::cout << "Game has been reset. You can now add new players.\n";
 }
 
+/**
+ * Returns the total coins in the game pool.
+ */
 int Game::getCoinPool() const
 {
     return this->coinPool;
 }
 
+/**
+ * Removes a specific amount of coins from the pool.
+ */
 void Game::takeFromPool(int amount)
 {
     this->coinPool -= amount;
 }
 
+/**
+ * Adds a specific amount of coins to the pool.
+ */
 void Game::addToPool(int amount)
 {
     this->coinPool += amount;
 }
 
+/**
+ * Returns the name of the player whose turn it is.
+ */
 string Game::turn() const {
     return players[turnIndex]->getName();
 }

@@ -15,7 +15,9 @@
 #include "Judge.hpp"
 
 using namespace std;
-
+/**
+ * Helper function to print info about the player
+ */
 void printFunction(shared_ptr<Player> p, Game g)
 {
     cout << "Player Name: " << p->getName() << endl;
@@ -29,7 +31,9 @@ void printFunction(shared_ptr<Player> p, Game g)
         cout << "is Alive ? false\n";
     }
 }
-
+/**
+ * Helper function to print player Role
+ */
 string printROLE(shared_ptr<Player> p)
 {
     if (p->getRole()->name() == "General")
@@ -57,7 +61,10 @@ string printROLE(shared_ptr<Player> p)
         return "Spy";
     }
 }
-
+/**
+ * just a main to make a game and to check if every function or role of the game is working'
+ * its help to get info that the game wotk prefectly!!
+ */
 int main()
 {
     try {

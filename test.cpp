@@ -10,6 +10,15 @@
 #include "Judge.hpp"
 #include "Merchant.hpp"
 
+/**
+ * Main test function using doctest framework.
+ * Tests all game functionality and edge cases.
+ */
+
+/**
+ * Tests basic game functionality.
+ * Adding players, turn management, and basic rules.
+ */
 TEST_CASE("Game Basic Functionality") {
     SUBCASE("Add players to game") {
         Game game;
@@ -415,6 +424,10 @@ TEST_CASE("Bribe Tests") {
     }
 }
 
+/**
+ * Tests game state management.
+ * Turn transitions and status resets.
+ */
 TEST_CASE("Game State Management") {
     Game game;
     auto player1 = std::make_shared<Player>("Player1");

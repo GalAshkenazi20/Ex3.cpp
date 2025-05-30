@@ -19,6 +19,10 @@
 #include "Judge.hpp"
 #include "Merchant.hpp"
 
+/**
+ * GameGUI class provides a graphical interface for the game.
+ * Allows players to interact with the game using buttons and menus.
+ */
 class GameGUI : public QWidget
 {
 private:
@@ -31,11 +35,18 @@ private:
     bool gameStarted = false;
 
 public:
+    /**
+     * Constructor for the GameGUI class.
+     * Sets up the user interface.
+     */
     GameGUI(QWidget *parent = nullptr) : QWidget(parent)
     {
         setupUI();
     }
 
+    /**
+     * Sets up the graphical user interface.
+     */
     void setupUI()
     {
         setWindowTitle("Coup Game");
@@ -84,6 +95,10 @@ public:
         updateDisplay();
     }
 
+    /**
+     * Adds a new player to the game.
+     * Opens dialog to enter player name.
+     */
     void addPlayer()
     {
         bool ok;
@@ -103,6 +118,10 @@ public:
         }
     }
 
+    /**
+     * Starts the game with current players.
+     * Disables adding more players.
+     */
     void startGame()
     {
         if (game.getPlayers().size() < 2)
@@ -117,6 +136,10 @@ public:
         updateActionButtons();
     }
 
+    /**
+     * Updates the display with current game state.
+     * Shows player info, coins, and status.
+     */
     void updateDisplay()
     {
         // Update game info
@@ -166,6 +189,10 @@ public:
         }
     }
 
+    /**
+     * Updates the state of action buttons based on the game state.
+     * Shows available actions for current turn.
+     */
     void updateActionButtons()
     {
         // Clear existing buttons
@@ -267,6 +294,10 @@ public:
                 { performCoup(); });
     }
 
+    /**
+     * Performs gather action for current player.
+     * Collects 1 coin from pool.
+     */
     void performGather()
     {
         try
@@ -281,6 +312,10 @@ public:
         }
     }
 
+    /**
+     * Performs tax action for current player.
+     * Collects 2-3 coins depending on role.
+     */
     void performTax()
     {
         try
@@ -295,6 +330,10 @@ public:
         }
     }
 
+    /**
+     * Performs bribe action for current player.
+     * Costs 4 coins, gives extra turn.
+     */
     void performBribe()
     {
         try
@@ -309,6 +348,10 @@ public:
         }
     }
 
+    /**
+     * Performs sanction action on selected target.
+     * Costs 3 coins, blocks target's actions.
+     */
     void performSanction()
     {
         auto target = selectTarget("Select target to sanction:");
@@ -327,6 +370,10 @@ public:
         }
     }
 
+    /**
+     * Performs arrest action on selected target.
+     * Steals 1 coin from target.
+     */
     void performArrest()
     {
         auto target = selectTarget("Select target to arrest:");
@@ -345,6 +392,10 @@ public:
         }
     }
 
+    /**
+     * Performs coup action on selected target.
+     * Costs 7 coins, eliminates target.
+     */
     void performCoup()
     {
         auto target = selectTarget("Select target to coup:");
@@ -373,7 +424,13 @@ public:
                 {
                     QMessageBox::information(this, "Game Over",
                                              QString("Winner: %1").arg(QString::fromStdString(lastAlivePlayer->getName())));
-                }
+                 game.gameReset();
+                gameStarted = false;
+                addPlayerBtn->setEnabled(true);
+                startGameBtn->setEnabled(true);
+                updateDisplay();
+                updateActionButtons();
+                    }
             }
             catch (const std::exception &e)
             {
@@ -382,6 +439,10 @@ public:
         }
     }
 
+    /**
+     * Performs invest action (Baron only).
+     * Pays 3 coins to get 6 coins back.
+     */
     void performInvest()
     {
         try
@@ -396,6 +457,10 @@ public:
         }
     }
 
+    /**
+     * Performs spy-specific actions.
+     * Allows seeing coins or blocking arrests.
+     */
     void performSpyAction()
     {
         auto target = selectTarget("Select target for spy action:");
@@ -424,6 +489,10 @@ public:
         }
     }
 
+    /**
+     * Performs General's prevent coup action.
+     * Protects target from next coup attempt.
+     */
     void performPreventCoup()
     {
         auto target = selectTarget("Select target to protect from coup:");
@@ -445,6 +514,10 @@ public:
             }
         }
     }
+    /**
+     * Performs Governor's cancel tax action.
+     * Forces target to return tax coins.
+     */
     void performCancelTax()
     {
         auto currentPlayer = game.currentPlayerTurn();
@@ -472,6 +545,10 @@ public:
         }
     }
 
+    /**
+     * Performs Judge's cancel bribe action.
+     * Cancels target's bribe effect.
+     */
     void performCancelBribe()
     {
         auto currentPlayer = game.currentPlayerTurn();
@@ -499,6 +576,10 @@ public:
         }
     }
 
+    /**
+     * Opens dialog to select target player.
+     * Returns selected player or nullptr if cancelled.
+     */
     std::shared_ptr<Player> selectTarget(const QString &title)
     {
         QStringList playerNames;
@@ -531,6 +612,10 @@ public:
         return nullptr;
     }
 
+    /**
+     * Moves to next player's turn.
+     * Updates display and available actions.
+     */
     void nextTurn()
     {
         game.nextTurn();
